@@ -1,67 +1,105 @@
-eng_alphabet_space = " 0123456789abcdefghijklmnopqrstuvwxyz"
-rus_alphabet_space = " 0123456789абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
-list_letters = []
-encryption_1 = []
-eng_coding = []
-rus_coding = []
-list_letters_result = []
+#!usr/bin/env python3
+# -*- coding: utf-8 -*-
+import random
 
-def rotate(l, n):
-    return l[-n:] + l[:-n]
 
-print("Это приложение по шифрованию и пожалуйста вводите текст с маленькими буквами, в дальнейшем итог шифрования появится в новом созданном текстовом файле в той же папке где находится эта программа.")
+class Encrypt:
 
-file_name = str(input("Введите имя файла, куда выведется зашифрованный текст: "))
 
-word = str(input("Введите ваш текст: "))
+    def docs():
+        info = \
+        """
+        This app for encrypt your text
+        Please post in this app word with small symbol
+        result will be output in *.txt file where located this file
+        """
+        return info
 
-for i in range(len(word)):
-    list_letters.append(word[i])
 
-print("Сейчас вам предложат ввести шифровальный код, в дальнейшем вы можете модифицировать шифр ещё другим шифровальным кодом и т.п.")
+    def encrypt(word, code, alphabet):
+        list_letters = []
+        list_letters_result = []
+        code_1 = []
+        code_2 = []
+        eng_alphabet_space = " 0123456789abcdefghijklmnopqrstuvwxyz"
+        rus_alphabet_space = " 0123456789абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
         
-encryption = str(input('Введите шифровальный код: '))
+        def rotate(l, n):
+            return list(l[-n:] + l[:-n])
 
-for _ in range(len(list_letters) // len(encryption) + 1):
-    for i in range(len(encryption)):
-        encryption_1.append(encryption[i])
+        def generate(arg, arg2):
+            gen = list()
+            if arg == 'eng':
+                for i in range(0, 100):
+                    num = random.randint(0, len(arg2)-1)
+                    gen.append(arg2[num])
+            if arg == 'rus':
+                for i in range(0, 100):
+                    num = random.randint(0, len(arg2)-1)
+                    gen.append(arg2[num])
+            return gen
 
-alphabet_coding = str(input("Пожалуйста выберите алфавит шифровального кода (rus/eng): "))
+        for i in word:
+            list_letters.append(i)
+        
+        if alphabet == 'rus':
+            generic = list(generate('rus', rus_alphabet_space))
+            count = 0
+            for n in code:
+                if n in generic:
+                    code_1.append('')
+                    code_1[count] = rotate(rus_alphabet_space, generic.index(n))[0]
+                    count += 1
+                else:
+                    code_1.append('')
+                    code_1[count] = generic[code.index(n)]
+                    count += 1
+            code_1 = ''.join(code_1)
+        
+        if alphabet == 'eng':
+            generic = list(generate('eng', eng_alphabet_space))
+            count = 0
+            for n in code:
+                if n in generic:
+                    code_1.append('')
+                    code_1[count] = rotate(eng_alphabet_space, generic.index(n))[0]
+                    count += 1
+                else:
+                    code_1.append('')
+                    code_1[count] = generic[code.index(n)]
+                    count += 1
+            code_1 = ''.join(code_1)
 
-while len(list_letters_result) < len(list_letters)+1:
+        for n in range(len(list_letters) // len(code_1) + 1):
+            for i in code_1:
+                code_2.append(i)
 
-    if alphabet_coding == "rus":        
+        while len(list_letters_result) < len(list_letters)+1:
 
-        for i in range(len(list_letters)):
+            if alphabet == "rus":        
+                for i in list_letters:
 
-            if list_letters[i] in rus_alphabet_space:
-                a = rus_alphabet_space.index(list_letters[i])
-                b = rus_alphabet_space.index(encryption_1[i])
-                list_letters_result.insert(i, rotate(rus_alphabet_space, b)[a])
+                    if i in rus_alphabet_space:
+                        a = rus_alphabet_space.index(i)
+                        b = rus_alphabet_space.index(code_2[list_letters.index(i)])
+                        list_letters_result.insert(list_letters.index(i), rotate(rus_alphabet_space, b)[a])
 
-            else:
-                list_letters_result.insert(i, list_letters[i])
-                
-    elif alphabet_coding == "eng":     
+                    else:
+                        list_letters_result.insert(list_letters.index(i), i)
+                        
+            if alphabet == "eng":     
 
-        for i in range(len(list_letters)):
+                for i in list_letters:
 
-            if list_letters[i] in eng_alphabet_space:
-                a = eng_alphabet_space.index(list_letters[i])
-                b = eng_alphabet_space.index(encryption_1[i])
-                list_letters_result.insert(i, rotate(eng_alphabet_space, b)[a])
+                    if i in eng_alphabet_space:
+                        a = eng_alphabet_space.index(i)
+                        b = eng_alphabet_space.index(code_2[list_letters.index(i)])
+                        list_letters_result.insert(list_letters.index(i), rotate(eng_alphabet_space, b)[a])
 
-            else:
-                list_letters_result.insert(i, list_letters[i])
-                
-    else:
-        None
+                    else:
+                        list_letters_result.insert(list_letters.index(i), i)
+        result = [i for i in list_letters_result[:len(list_letters)]]
+        result = ''.join(result)
+        return result
 
-new_file = open(f"{file_name}.txt", "a+")
-new_file.write("\n----------\n")
-for element in list_letters_result[:len(list_letters)]:
-        new_file.write(element)
-new_file.close()
-print(*list_letters_result[:len(list_letters)])
-
-print(f'Текст перенесен в созданный вами файл под именем ({file_name}.txt)')
+print(Encrypt.encrypt('Hello World other people', 'hidufgnkhi2h13kjnlvx', 'eng'))
